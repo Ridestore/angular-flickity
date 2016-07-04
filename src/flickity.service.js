@@ -64,7 +64,6 @@ export class FlickityService {
      * @return {Object} instance
      */
     destroy(id) {
-        const pauseBeforeDestruction = 100;
         const flickityIndex = this._getFlickityIndex(id);
 
         return this.$q((resolve, reject) => {
@@ -72,11 +71,6 @@ export class FlickityService {
             if (flickityIndex < 0) {
                 reject('Instance ' + id + ' not found');
             }
-
-            // Pause to allow other scope cleanup to occur
-            // NOTE: Without this pause, Flickity is being destroyed before the view containing the
-            // directive can leave view
-            this.$timeout(() => {
 
                 // Destroy the Flickity instance
                 this.instances[flickityIndex].instance.destroy();
@@ -86,7 +80,6 @@ export class FlickityService {
 
                 resolve('Instance ' + id + ' destroyed.');
 
-            }, pauseBeforeDestruction);
         });
 
     }
@@ -597,4 +590,3 @@ export class FlickityService {
 
 
 }
-
