@@ -138,8 +138,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* global Flickity */
 	
 	var FlickityService = exports.FlickityService = function () {
-	    FlickityService.$inject = ["$timeout", "$q", "$rootScope"];
-	    function FlickityService($timeout, $q, $rootScope) {
+	    FlickityService.$inject = ["$timeout", "$q", "$rootScope", "$log"];
+	    function FlickityService($timeout, $q, $rootScope, $log) {
 	        'ngInject';
 	
 	        _classCallCheck(this, FlickityService);
@@ -147,6 +147,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.$timeout = $timeout;
 	        this.$q = $q;
 	        this.$rootScope = $rootScope;
+	        this.$log = $log;
 	
 	        this.instances = [];
 	    }
@@ -173,7 +174,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            // Check to see if the ID is already in use
 	            if (this._findObjectById(this.instances, id)) {
 	                var index = this._getFlickityIndex(id);
-	                console.error('This ID is already in use: ', this.instances[index]);
+	                this.$log.error('This ID is already in use: ', this.instances[index]);
 	
 	                return false;
 	            }
@@ -208,7 +209,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function destroy(id) {
 	            var _this2 = this;
 	
-	            var pauseBeforeDestruction = 2000;
 	            var flickityIndex = this._getFlickityIndex(id);
 	
 	            return this.$q(function (resolve, reject) {
@@ -217,19 +217,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    reject('Instance ' + id + ' not found');
 	                }
 	
-	                // Pause to allow other scope cleanup to occur
-	                // NOTE: Without this pause, Flickity is being destroyed before the view containing the
-	                // directive can leave view
-	                _this2.$timeout(function () {
+	                // Destroy the Flickity instance
+	                _this2.instances[flickityIndex].instance.destroy();
 	
-	                    // Destroy the Flickity instance
-	                    _this2.instances[flickityIndex].instance.destroy();
+	                // Remove the instance from the array
+	                _this2.instances.splice(flickityIndex, 1);
 	
-	                    // Remove the instance from the array
-	                    _this2.instances.splice(flickityIndex, 1);
-	
-	                    resolve('Instance ' + id + ' destroyed.');
-	                }, pauseBeforeDestruction);
+	                resolve('Instance ' + id + ' destroyed.');
 	            });
 	        }
 	
