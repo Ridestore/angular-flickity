@@ -1,5 +1,7 @@
 # Angular Flickity
 
+Fork with adjusted destroy method without the delay
+
 [**Simple Plunker demo**][demo_basic]
 
 [Flickity][flickity] by [David DeSandro][desandro]
